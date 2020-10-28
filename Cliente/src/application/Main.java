@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import application.Bricks.Brick;
 import application.Bricks.BrickFactory;
 import application.Bricks.BrickType;
+import application.Parser.JsonParser;
 import application.PlayerAndBall.Ball;
 import application.PlayerAndBall.Player;
 import javafx.animation.AnimationTimer;
@@ -53,6 +54,9 @@ public class Main extends Application {
 	Text scoreLabel = new Text("Score: " + Integer.toString(this.score));
 	Text livesLabel = new Text("Lives: " + Integer.toString(this.lives));
 	Text levelLabel = new Text("Level: " + Integer.toString(this.level));
+	
+	//Parser del juego en formato JSON
+	JsonParser parser = new JsonParser();
 	
 	/*Función que crea el contenido de la ventana en ese momento
 	 * Entradas: -
@@ -230,11 +234,14 @@ public class Main extends Application {
 	//Función inicializadora del juego
 	@Override
 	public void start(Stage stage) {
-		  Scene scene = new Scene(createContent());
+		
+		parser.deserializeJson();
+		
+		Scene scene = new Scene(createContent());
 		  
-		  scene.setOnKeyPressed(e ->{
-			  switch(e.getCode()) {
-			  	case A:
+		scene.setOnKeyPressed(e ->{
+			switch(e.getCode()) {
+			 	case A:
 			  		player.moveLeft();
 			  		break;
 			  	case D: 
