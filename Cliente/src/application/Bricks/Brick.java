@@ -5,7 +5,7 @@ import javafx.scene.shape.Rectangle;
 
 public abstract class Brick extends Rectangle {
 	
-	Integer points;
+	private Integer points;
 	
 	public Brick(Integer x, Integer y, Integer w, Integer h, Integer points, Color color) {
 		
@@ -17,5 +17,9 @@ public abstract class Brick extends Rectangle {
 		
 	}
 	public abstract String performAction();
+	
+	public Integer getPoints() {
+		return this.points;
+	}
 	
 }

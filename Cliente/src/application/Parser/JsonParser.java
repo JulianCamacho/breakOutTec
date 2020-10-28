@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 public class JsonParser {
 	
-	public static void deserializeJson() {
+	public static JsonTestClass deserializeJson() {
 		
 		String userJson = "{'matrix':[[4,4,4,4,4,4,4,4,4,4,4,4,4,4],[4,4,0,4,4,4,4,4,4,4,4,4,4,4],[3,3,3,3,3,3,3,3,3,3,3,3,3,3],[3,3,3,3,3,3,3,3,3,3,3,0,3,3],[2,2,2,2,2,2,2,2,2,2,2,2,2,2],[2,2,2,2,2,2,2,2,2,2,0,2,2,2],[1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1]],"
 				+ "'ives':0,"
@@ -12,7 +12,7 @@ public class JsonParser {
 				+ "'ballSpeed':7,"
 				+ "'ballPosition':[42,69],"
 				+ "'racketLenght':20,"
-				+ "'racketPosition':50,"
+				+ "'racketPosition':4,"
 				+ "'level':1,"
 				+ "'score':900,"
 				+ "'greenBrickValue':100,"
@@ -22,9 +22,9 @@ public class JsonParser {
 		;
 		Gson gson = new Gson();
 		
-		JsonTestClass test = gson.fromJson(userJson, JsonTestClass.class);
+		JsonTestClass json = gson.fromJson(userJson, JsonTestClass.class);
 		
-		System.out.print(test.greenBrickValue);
+		return json;
 		
 	}
 	

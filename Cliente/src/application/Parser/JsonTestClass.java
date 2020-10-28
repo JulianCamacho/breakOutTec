@@ -7,6 +7,7 @@ public class JsonTestClass {
 	public Integer ballQuantity;
 	public Integer ballSpeed;
 	public Integer[] ballPosition;
+	public Integer racketLenght;
 	public Integer racketPosition;
 	public Integer level;
 	public Integer score;
@@ -16,14 +17,15 @@ public class JsonTestClass {
 	public Integer redBrickValue;
 	
 	public JsonTestClass(Integer[][] matrix, Integer lives, Integer ballQuantity, Integer ballSpeed,
-			Integer[] ballPosition, Integer racketPosition, Integer level, Integer score, Integer greenBrickValue,
-			Integer yellowBrickValue, Integer orangeBrickValue, Integer redBrickValue) {
-
+			Integer[] ballPosition, Integer racketLenght, Integer racketPosition, Integer level, Integer score,
+			Integer greenBrickValue, Integer yellowBrickValue, Integer orangeBrickValue, Integer redBrickValue) {
+		super();
 		this.matrix = matrix;
 		this.lives = lives;
 		this.ballQuantity = ballQuantity;
 		this.ballSpeed = ballSpeed;
 		this.ballPosition = ballPosition;
+		this.racketLenght = racketLenght;
 		this.racketPosition = racketPosition;
 		this.level = level;
 		this.score = score;
@@ -32,5 +34,7 @@ public class JsonTestClass {
 		this.orangeBrickValue = orangeBrickValue;
 		this.redBrickValue = redBrickValue;
 	}
+	
+	
 	
 }

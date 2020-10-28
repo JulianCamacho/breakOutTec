@@ -7,9 +7,10 @@ public class BrickFactory {
 	public Brick getBrick(BrickType type, Integer x, Integer y, Integer w, Integer h, Integer points, Color color) {
 		
 		switch(type) {
+			case NORMAL:
+			return new NormalBrick(x, y, w, h, points, color);
 			case LIFE:
 				return new LiveBrick( x,  y,  w,  h,  points,   color);
-				
 			case BALL:
 				return new BallBrick( x,  y,  w,  h,  points,   color);
 			case DOUBLESIZE:
