@@ -158,6 +158,7 @@ public class Main extends Application {
 		//Si lives < 0, el juego termina
 		if(this.lives < 0 && !gameOver) {
 			gameOver = true;
+			AlertBox.display("Derrota", "Perdiste el nivel");
 			window.setScene(menuScene);
 			System.out.println("Perdió");
 		}
@@ -344,7 +345,7 @@ public class Main extends Application {
 		this.ballQuantity = 10;
 		this.ballSpeed = json.ballSpeed;
 		this.ballSpeed = 9;
-		this.racketLenght = 1000;
+		this.racketLenght = 100;
 		//this.racketPosition = json.racketPosition;
 		//this.racketPosition = 400;
 		this.racketPosition = 0;
