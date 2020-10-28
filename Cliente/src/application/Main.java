@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
@@ -47,6 +48,8 @@ public class Main extends Application {
 	boolean gameOver = false;
 	
 	//Ventana principal
+	Stage window;
+	Scene menuScene;
 	BorderPane root = new BorderPane();
 	
 	//Elementos del juego
@@ -72,11 +75,11 @@ public class Main extends Application {
 	 * Restricciones: -
 	 */
 
-	private Parent createContent() {
+	private Parent createContentGame() {
 		
-		HBox stats = new HBox();
+		root = new BorderPane();
 		
-		Button button = new Button("Prueba");
+		HBox stats = new HBox(20);
 		
 		stats.getChildren().addAll(scoreLabel, livesLabel, levelLabel);
 		
@@ -86,13 +89,18 @@ public class Main extends Application {
 		
 		root.getChildren().add(player);
 		
-		spawnBall();
+		spawnBall(ballQuantity);
+		
 		
 		//Se comporta como un mainloop del juego, update se usa como la función que actualiza
 		//el juego
+		
 		AnimationTimer timer = new AnimationTimer() {
 			public void handle(long now) {
 				update();
+				if(gameOver) {
+					stop();
+				}
 			}
 		};
 		
@@ -104,6 +112,43 @@ public class Main extends Application {
 		
 	}
 	
+	private Parent createContentMenu() {
+		
+		VBox menu = new VBox(20);
+		
+		Button gameButton = new Button("Play");
+		gameButton.setOnAction(e ->{
+			
+			gameOver = false;
+			setupGame();
+			
+			Scene gameScene = new Scene(createContentGame());
+			  
+			gameScene.setOnKeyPressed(f ->{
+				switch(f.getCode()) {
+				 	case A:
+				  		player.moveLeft();
+				  		break;
+				  	case D: 
+				  		player.moveRight();
+				  		break;
+				  	
+				  }
+			  });
+			
+			window.setScene(gameScene);
+		});
+		
+		Button spectButton = new Button("Spect");
+		
+		menu.setPrefSize(WIDTH, HEIGHT);
+		
+		menu.getChildren().addAll(gameButton, spectButton);
+		
+		return menu;
+		
+	}
+	
 	/*Función que se encarga de actualizar elementos del juego
 	 * 
 	 */
@@ -111,8 +156,20 @@ public class Main extends Application {
 	private void update() {
 		
 		//Si lives < 0, el juego termina
-		if(this.lives < 0) {
+		if(this.lives < 0 && !gameOver) {
+			gameOver = true;
+			window.setScene(menuScene);
 			System.out.println("Perdió");
+		}
+		
+		//Si rompe todos los bloques, gana el nivel
+		
+		if(this.bricks.size() <= 0 && !gameOver) {
+			clearBalls();
+			gameOver = true;
+			AlertBox.display("Felicidades", "Ganaste el nivel");
+			window.setScene(menuScene);
+			System.out.println("Ganó");
 		}
 		
 		//check if balls bounds on window
@@ -215,23 +272,36 @@ public class Main extends Application {
 		}
 	}
 	
-	private void spawnBall() {
-		Ball ball = new Ball(BALLSPAWNX, BALLSPAWNY, 15, ballSpeed, Color.AQUA);
-		balls.add(ball);
-		root.getChildren().add(ball);
-		ballQuantity++;
+	private void clearBalls() {
+		for(int i = 0; i < balls.size(); i++) {
+			root.getChildren().remove(balls.get(i));
+		}
+		balls.clear();
+		
+	}
+	
+	private void spawnBall(Integer quantity) {
+		for(int i = 0; i < quantity; i++) {
+			Ball ball = new Ball(BALLSPAWNX, BALLSPAWNY, 15, ballSpeed, Color.AQUA);
+			balls.add(ball);
+			root.getChildren().add(ball);
+			ballQuantity++;
+		}
 	}
 	
 	//Función que se encarga decambiar variables del juego cuando un bloque se rompe
 	public void brickAction(String action, Integer points) {
+		System.out.println(action);
 		score += points;
 		switch(action) {
+			case "NormalBrick":
+				break;
 			case "LiveBrick":
 				this.lives++;
 				System.out.println(this.lives);
 				break;
 			case "Ballbrick":
-				spawnBall();
+				spawnBall(1);
 				System.out.println("crea bola");
 				break;
 			case "DecreaseVelBrick":
@@ -243,6 +313,7 @@ public class Main extends Application {
 				ballSpeed--;
 				break;
 			case "IncreaseVelBrick":
+				System.out.print("Aumenta vel bola");
 				balls.forEach(b ->{
 					if(b.getSpeed() > 1) {
 						b.IncreaseSpeed(1);
@@ -267,12 +338,16 @@ public class Main extends Application {
 		
 		JsonTestClass json = parser.deserializeJson();
 		this.matrix = json.matrix;
-		this.ballQuantity = json.ballQuantity;
-		//this.ballSpeed = json.ballSpeed;
-		this.ballSpeed = 3;
-		this.racketLenght = 200;
+		this.lives = json.lives;
+		
+		//this.ballQuantity = json.ballQuantity;
+		this.ballQuantity = 10;
+		this.ballSpeed = json.ballSpeed;
+		this.ballSpeed = 9;
+		this.racketLenght = 1000;
 		//this.racketPosition = json.racketPosition;
-		this.racketPosition = 400;
+		//this.racketPosition = 400;
+		this.racketPosition = 0;
 		this.level = json.level;
 		this.score = json.score;
 		this.greenBrickValue = json.greenBrickValue;
@@ -287,27 +362,16 @@ public class Main extends Application {
 	
 	//Función inicializadora del juego
 	@Override
-	public void start(Stage stage) {
+	public void start(Stage primaryStage) {
 		
-		setupGame();
+		window = primaryStage;
+		  
+		menuScene = new Scene(createContentMenu()); 
 		
-		Scene scene = new Scene(createContent());
-		  
-		scene.setOnKeyPressed(e ->{
-			switch(e.getCode()) {
-			 	case A:
-			  		player.moveLeft();
-			  		break;
-			  	case D: 
-			  		player.moveRight();
-			  		break;
-			  	
-			  }
-		  });
-		  
-		  stage.setScene(scene);
-		  stage.setTitle("breakOutTec");
-		  stage.show();
+		window.setScene(menuScene);
+		window.setTitle("breakOutTec");
+		window.show();
+		
 	}
 	
 	public static void main(String[] args) {

@@ -8,7 +8,7 @@ public class BrickFactory {
 		
 		switch(type) {
 			case NORMAL:
-			return new NormalBrick(x, y, w, h, points, color);
+				return new NormalBrick(x, y, w, h, points, color);
 			case LIFE:
 				return new LiveBrick( x,  y,  w,  h,  points,   color);
 			case BALL:

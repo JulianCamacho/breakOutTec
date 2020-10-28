@@ -6,8 +6,8 @@ import javafx.scene.shape.Circle;
 public class Ball extends Circle{
 
 	private Integer speed;
-	private Integer dirX = 1;
-	private Integer dirY = 1;
+	public Integer dirX = 1;
+	public Integer dirY = 1;
 	
 	public Ball(Integer posX, Integer posY, Integer radius, Integer speed, Color color) {
 		super(posX, posY, radius, color);
@@ -24,6 +24,10 @@ public class Ball extends Circle{
 		//Choca con borde
 		if(!(0 < (int) this.getCenterX() && (int) this.getCenterX() < windowWidth)) {
 			dirX *= -1;
+		}
+		
+		if(this.getCenterY() <= 0) {
+			changeDirY();
 		}
 		
 	}
