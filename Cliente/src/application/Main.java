@@ -1,11 +1,9 @@
 package application;	
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import application.Bricks.Brick;
 import application.Bricks.BrickFactory;
 import application.Bricks.BrickType;
-import application.Bricks.LiveBrick;
 import application.PlayerAndBall.Ball;
 import application.PlayerAndBall.Player;
 import javafx.animation.AnimationTimer;
@@ -13,27 +11,28 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public class Main extends Application {
 	
 	//Constantes del juego
 	private static final Integer WIDTH = 800;
 	private static final Integer HEIGHT = 600;
-	private static final Integer BALLQUANTITY = 1;
 	private static final Integer PLAYERY = 500;
 	private static final Integer PLAYERHEIGHT = 5;
+	private static final Integer BRICKSCORE = 100;
 	
 	//variables
 	private Integer[][] matrix = new Integer[14][8];
 	private Integer lives = 3;
 	private Integer racketLenght = 200;
 	private Integer ballSpeed = 3;
-	private Integer[] ballPosition = new Integer[2];
-	private Integer racketPosition = 400;
+	private Integer ballQuantity = 1;
+	private Integer racketPosition = WIDTH/2;
 	private Integer score = 0;
 	private Integer level = 0;
 	boolean gameOver = false;
@@ -49,6 +48,12 @@ public class Main extends Application {
 	//Factoría de bricks
 	private BrickFactory factory = new BrickFactory();
 	
+	//WIdgets de estadisticas del juego
+	
+	Text scoreLabel = new Text("Score: " + Integer.toString(this.score));
+	Text livesLabel = new Text("Lives: " + Integer.toString(this.lives));
+	Text levelLabel = new Text("Level: " + Integer.toString(this.level));
+	
 	/*Función que crea el contenido de la ventana en ese momento
 	 * Entradas: -
 	 * Salidas: Objeto tipo Parent (JavaFX)
@@ -56,6 +61,14 @@ public class Main extends Application {
 	 */
 
 	private Parent createContent() {
+		
+		HBox stats = new HBox();
+		
+		Button button = new Button("Prueba");
+		
+		stats.getChildren().addAll(scoreLabel, livesLabel, levelLabel);
+		
+		root.setTop(stats);
 		
 		root.setPrefSize(WIDTH, HEIGHT);
 		
@@ -66,8 +79,8 @@ public class Main extends Application {
 		
 		root.getChildren().add(ball);
 		
-		//Se comporta como un mainloop del juego, update se usa
-		//como la función que actualiza el juego
+		//Se comporta como un mainloop del juego, update se usa como la función que actualiza
+		//el juego
 		AnimationTimer timer = new AnimationTimer() {
 			public void handle(long now) {
 				update();
@@ -87,12 +100,26 @@ public class Main extends Application {
 	 */
 	
 	private void update() {
+		
+		//Si lives < 0, el juego termina
+		if(this.lives < 0) {
+			System.out.println("Perdió");
+		}
+		
 		//check if balls bounds on window
 		for(int j = 0; j < balls.size(); j++){
 			
 			Ball ball = balls.get(j);
-			
 			ball.moveX(WIDTH);
+			ball.moveY(WIDTH);
+			
+			//Si alguna bola pasa por debajo de la posición Y de la raqueta
+			
+			if(ball.getCenterY() > PLAYERY) {
+				root.getChildren().remove(balls.get(j));
+				balls.remove(j);
+				this.lives--;
+			}
 			
 			//Si la bola choca con el jugador, osea la raqueta
 			if(player.getBoundsInParent().intersects(ball.getBoundsInParent())) {
@@ -111,8 +138,12 @@ public class Main extends Application {
 				}
 			}
 			
-			ball.moveY(WIDTH);
 		}
+		
+		scoreLabel.setText("Score: " + Integer.toString(this.score));
+		livesLabel.setText("Lives: " + Integer.toString(this.lives));
+		levelLabel.setText("Level: " + Integer.toString(this.level));
+		
 	}
 	
 	//Función que se encarga de crear una matriz
@@ -145,15 +176,16 @@ public class Main extends Application {
 				}
 				
 				//Integer iInteger = new Integer(iInt);
-				Brick brick = factory.getBrick(type, WIDTH/14 * x, y * 20 + y , WIDTH/14 - 1, 20, 100, color);
+				Brick brick = factory.getBrick(type, WIDTH/14 * x, y * 20 + y + 100 , WIDTH/14 - 1, 20, 100, color);
 				bricks.add(brick);
 				root.getChildren().add(brick);
 			}
 		}
 	}
 	
-	//Función que se encarga decambiar variables del juego
+	//Función que se encarga decambiar variables del juego cuando un bloque se rompe
 	public void brickAction(String action) {
+		score += BRICKSCORE;
 		switch(action) {
 			case "LiveBrick":
 				this.lives++;
@@ -164,6 +196,7 @@ public class Main extends Application {
 				Ball ball = new Ball(WIDTH/2, racketPosition-50, 15, ballSpeed, Color.AQUA);
 				balls.add(ball);
 				root.getChildren().add(ball);
+				ballQuantity++;
 				break;
 			case "DecreaseVelBrick":
 				balls.forEach(b ->{
@@ -171,6 +204,7 @@ public class Main extends Application {
 						b.IncreaseSpeed(-1);
 					}
 				});
+				ballSpeed--;
 				break;
 			case "IncreaseVelBrick":
 				balls.forEach(b ->{
@@ -178,6 +212,7 @@ public class Main extends Application {
 						b.IncreaseSpeed(1);
 					}
 				});
+				ballSpeed++;
 				break;
 			case "RacketDoubleSizeBrick":
 				racketLenght *= 2;
