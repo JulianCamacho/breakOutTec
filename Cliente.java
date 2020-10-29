@@ -1,10 +1,7 @@
 package cliente;
-
 import java.io.*;
 import java.net.*;
-
-public class Cliente {
-
+public class Cliente { 
 	public static void main(String[] args) throws IOException{
 
 		String sentence;
@@ -25,16 +22,11 @@ public class Cliente {
         	while(true) {
 	               	sentence = inFromUser.readLine();
 	                System.out.println("SENTENCE: "+sentence);
-	                System.out.println("SENTENCE equals: "+sentence.equals("/exit"));
-	                if(sentence.equals("/exit")) {
-	                	clientSocket.close();
-	                	break;
-	                }
-	                outToServer.writeBytes(" /" + sentence + '\0'+'\n');
 	                
-	                modifiedSentence = inFromServer.readLine()+"}";
+	                outToServer.writeBytes(" /" + sentence +'\n');
+	                
+	                modifiedSentence = inFromServer.readLine();
 	                System.out.println("FROM SERVER: " + modifiedSentence+"\n");
-	        		
                 }
         	
         }catch (SocketException socketException){
@@ -42,5 +34,4 @@ public class Cliente {
         }
         clientSocket.close();
 	}
-
 }
