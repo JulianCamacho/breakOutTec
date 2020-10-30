@@ -1,6 +1,7 @@
 package application;	
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ClientSocket.Cliente;
 import application.Bricks.Brick;
@@ -20,7 +21,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class Main extends Application {
 	
@@ -46,6 +51,12 @@ public class Main extends Application {
 	private Integer yellowBrickValue = 0;
 	private Integer orangeBrickValue = 0;
 	private Integer redBrickValue = 0;
+	
+	//Matriz de referencia, para saber si cambia
+	private Integer[][] prevMatrix;
+	
+	//Debug de los json
+	Integer jsonDebug = 1;
 	
 	boolean gameOver = false;
 	
@@ -116,6 +127,13 @@ public class Main extends Application {
 		
 	}
 	
+	/*
+	 * Crea el contenido de la ventana menú del juego
+	 * Entradas: -
+	 * Saldias: -
+	 * REstricciones: -
+	 */
+	
 	private Parent createContentMenu() {
 		
 		VBox menu = new VBox(20);
@@ -139,7 +157,9 @@ public class Main extends Application {
 				  	case C:
 				  		cliente.setSentence("Helados");
 				  		break;
-				  	
+				  	case P:
+				  		this.jsonDebug *= -1;
+				  		break;
 				  }
 			  });
 			
@@ -156,15 +176,26 @@ public class Main extends Application {
 		
 	}
 	
-	/*Función que se encarga de actualizar elementos del juego
-	 * 
+	/*Función que se encarga de actualizar elementos del juego en tiempo real
+	 * Entrads: -
+	 * Salidas: -
+	 * Restricciones: -
 	 */
 	
 	private void update() {
 		
+		//Si la matriz cambia, borra la matriz antigua, asigna la nueva matriz y vuelve a construirla
+		if(checkMatrixChange()) {
+			clearBricks();
+			createMatrix();
+		}
+		
 		//Si lives < 0, el juego termina
 		if(this.lives < 0 && !gameOver) {
 			gameOver = true;
+			clearBricks();
+			clearBalls();
+			cliente.stop();
 			AlertBox.display("Derrota", "Perdiste el nivel");
 			window.setScene(menuScene);
 			System.out.println("Perdió");
@@ -193,6 +224,9 @@ public class Main extends Application {
 				root.getChildren().remove(balls.get(j));
 				balls.remove(j);
 				this.lives--;
+				if(this.lives >= 0) {
+					spawnBall(1);
+				}
 			}
 			
 			//Si la bola choca con el jugador, osea la raqueta
@@ -215,13 +249,24 @@ public class Main extends Application {
 			
 		}
 		
+		//Actualizar variables respecto al json
+		setVairablesWithJson();
+		
 		scoreLabel.setText("Score: " + Integer.toString(this.score));
 		livesLabel.setText("Lives: " + Integer.toString(this.lives));
 		levelLabel.setText("Level: " + Integer.toString(this.level));
 		
+		//clearBricks();
+		
 	}
 	
-	//Función que se encarga de crear una matriz
+	/*
+	 * Función que se encarga de crear una matriz, la parsea dependiendo de los valores de cada ladrillo
+	 * Entradas: -
+	 * Salidas: -
+	 * Restricciones: -
+	 */
+	
 	public void createMatrix() {
 		//Crea la matriz de bloques
 		for(int y = 0; y < 8; y++) {
@@ -231,7 +276,11 @@ public class Main extends Application {
 				Integer points = 100;
 				Color color = Color.GRAY;
 				
-				if(matrix[y][x] < 5) {
+				if(matrix[y][x] == 0) {
+					continue;
+				}
+				
+				if(matrix[y][x] < 5 && matrix[y][x] != 0) {
 					type = BrickType.NORMAL;
 					color = Color.GRAY;
 					points = DEFAULTPOINTSBRICK;
@@ -280,6 +329,32 @@ public class Main extends Application {
 		}
 	}
 	
+	/*
+	 * Función que revisa si la matriz cambia, respecto al json para poder cambiarla en la interfaz
+	 * Entradas: -
+	 * Salidas; -
+	 * Restricciones: -
+	 */
+	
+	private Boolean checkMatrixChange() {
+		
+		JsonTestClass json = parser.deserializeJson(jsonDebug);
+		
+		if (Arrays.deepEquals(json.matrix, this.matrix))
+			  return false;
+			else {
+				this.matrix = json.matrix;
+				return true;
+			}
+	}
+	
+	/*
+	 * Función que se encarga de limpiar la lista de bolas, además de destruir los widgets tipo bola de la interfaz
+	 * Entradas: -
+	 * Salidas: -
+	 * Restricciones: -
+	 */
+	
 	private void clearBalls() {
 		for(int i = 0; i < balls.size(); i++) {
 			root.getChildren().remove(balls.get(i));
@@ -287,6 +362,27 @@ public class Main extends Application {
 		balls.clear();
 		
 	}
+	
+	/*
+	 * Función que se encarga de limpiar la lista de ladrillos, además de destruir los widgets tipo ladrillo de la interfaz
+	 * Entradas: -
+	 * Salidas: -
+	 * Restricciones: -
+	 */
+	
+	private void clearBricks() {
+		for(int i = 0; i < bricks.size(); i++) {
+			root.getChildren().remove(bricks.get(i));
+		}
+		bricks.clear();
+	}
+	
+	/*
+	 * Función que se encarga de spawnear las bolas en el juego
+	 * Entradas: quantity: cantidad de bolas a spawnear en el juego
+	 * Salidas: -
+	 * Restricciones: quantity debería ser positivo
+	 */
 	
 	private void spawnBall(Integer quantity) {
 		for(int i = 0; i < quantity; i++) {
@@ -297,7 +393,12 @@ public class Main extends Application {
 		}
 	}
 	
-	//Función que se encarga decambiar variables del juego cuando un bloque se rompe
+	/*
+	 * Función que se encarga decambiar variables del juego cuando un bloque se rompe
+	 * Entradas: action: función del bloque en el juego, points: los puntos que da el bloque
+	 * Salidas: -
+	 * Restricciones: action debe ser algún caso, points debería ser positivo 
+	 */
 	public void brickAction(String action, Integer points) {
 		System.out.println(action);
 		score += points;
@@ -342,9 +443,17 @@ public class Main extends Application {
 	}
 	
 	
+	/*
+	 * función para preparar el juego, antes de mostrarlo al usuario en la interfaz
+	 * Entradas: -
+	 * Salidas: -
+	 * Restricciones: -
+	 */
+	
 	public void setupGame() {
 		
-		JsonTestClass json = parser.deserializeJson();
+		JsonTestClass json = parser.deserializeJson(jsonDebug);
+		
 		this.matrix = json.matrix;
 		this.lives = json.lives;
 		
@@ -361,13 +470,58 @@ public class Main extends Application {
 		this.orangeBrickValue = json.orangeBrickValue;
 		this.redBrickValue = json.redBrickValue;
 		
+		//Estilizar labels del juego
+		Font font = Font.font("Brush Script MT", FontWeight.BOLD, FontPosture.REGULAR, 35);
+	    scoreLabel.setFont(font);
+	    livesLabel.setFont(font);
+	    levelLabel.setFont(font);
+	    //Filling color to the label
+	    scoreLabel.setFill(Color.BROWN);
+	    livesLabel.setFill(Color.BLUE);
+	    levelLabel.setFill(Color.ORANGE);
+	    
 		player = new Player(racketPosition, PLAYERY, racketLenght, PLAYERHEIGHT, "player", Color.BLUE);
+		
 	}
 	
-	//Función inicializadora del juego
+	/*
+	 *Función que se encarga de asignar las variables dependiendo del json
+	 *Entradas: -
+	 *Salidas: -
+	 *Restricciones: - 
+	 */
+	
+	public void setVairablesWithJson() {
+		
+		JsonTestClass json = parser.deserializeJson(jsonDebug);
+		
+		this.lives = json.lives;
+		
+		this.ballQuantity = json.ballQuantity;
+		this.ballSpeed = json.ballSpeed;
+
+		this.racketLenght = json.racketLenght;
+		this.racketPosition = json.racketPosition;
+		
+		this.level = json.level;
+		this.score = json.score;
+		this.greenBrickValue = json.greenBrickValue;
+		this.yellowBrickValue = json.yellowBrickValue;
+		this.orangeBrickValue = json.orangeBrickValue;
+		this.redBrickValue = json.redBrickValue;
+		
+	}
+	
+	/*
+	 * Función inicializadora del juego, crea el menú delm juego
+	 * Entradas: -
+	 * Salidas: -
+	 * Restricciones: -
+	 */
+	
 	@Override
 	public void start(Stage primaryStage) throws IOException {
-		//cliente.start();
+		cliente.start();
 		
 		window = primaryStage;
 		  
@@ -379,6 +533,8 @@ public class Main extends Application {
 		
 	}
 	
+	
+	//Función main, lo primero que se ejecuta del programa
 	public static void main(String[] args) throws IOException {
 		launch(args);
 	}
