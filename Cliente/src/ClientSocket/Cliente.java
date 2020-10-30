@@ -4,6 +4,7 @@ import java.net.*;
 
 public class Cliente extends Thread{ 
 	String sentence;
+	String jsonReceived;
 	
 	
 	public Cliente(String sentence) {
@@ -35,10 +36,12 @@ public class Cliente extends Thread{
 	                	
 		                System.out.println("SENTENCE: "+sentence);
 		                
-		                outToServer.writeBytes(" /" + sentence +'\n');
+		                outToServer.writeBytes('/' + sentence +'\n');
 		                
 		                modifiedSentence = inFromServer.readLine();
-		                System.out.println("FROM SERVER: " + modifiedSentence+"\n");
+		                jsonReceived = modifiedSentence;
+		                
+		                System.out.println("FROM SERVER: "+jsonReceived+"\n");
 	            }
 	        	
 	        }catch (SocketException socketException){
@@ -65,5 +68,14 @@ public class Cliente extends Thread{
 	public void setSentence(String sentence) {
 		this.sentence = sentence;
 	}
+
+	public String getJsonReceived() {
+		return jsonReceived;
+	}
+
+	public void setJsonReceived(String jsonReceived) {
+		this.jsonReceived = jsonReceived;
+	}
+	
 	
 }

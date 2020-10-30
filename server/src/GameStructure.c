@@ -12,21 +12,23 @@ typedef struct game{
     int lives;
     int ballQuantity;
     double ballSpeed;
-    
+
     int ballPosition[GAMEDIMENSION];
     double racketLenght;
     int racketPosition;
 
     int level;
     int score;
-    
+
     int greenBrickValue;
     int yellowBrickValue;
     int orangeBrickValue;
     int redBrickValue;
 } game_t;
 
-/** createGame: inicializar por defecto todos los miembros del struct game 
+static game_t* mainGame;
+
+/** createGame: inicializar por defecto todos los miembros del struct game
  * game_t* newGame: game por inicializar
  * int greenVal: valor para los ladrillos verdes
  * int yellowVal: valor para los ladrillos amarillos
@@ -34,63 +36,60 @@ typedef struct game{
  * int redVal: valor para los ladrillos rojos
  */
 
-void createGame(game_t* newGame, int greenVal, 
-                                int yellowVal, 
-                                int orangeVal, 
-                                int redVal, double newBallSpeed, int levelUp, int newScore){
+void createGame(int greenVal,int yellowVal, int orangeVal, int redVal, double newBallSpeed, int levelUp, int newScore){
     //Inicializar todos los datos del juego actual
 
     //Inicializar la matriz de juego
     for (int i = 0; i < MAXROWS; i++){
         for (int j = 0; j < MAXCOLS; j++){
             if (i == 0 || i == 1){
-                newGame->matrix[i][j] = 4;
+                mainGame->matrix[i][j] = 4;
                 continue;
-            } 
+            }
             else if(i == 2 || i == 3){
-                newGame->matrix[i][j] = 3;
+                mainGame->matrix[i][j] = 3;
                 continue;
             }
             else if(i == 4 || i == 5){
-                newGame->matrix[i][j] = 2;
+                mainGame->matrix[i][j] = 2;
                 continue;
             }
             else if(i == 6 || i == 7){
-                newGame->matrix[i][j] = 1;
+                mainGame->matrix[i][j] = 1;
                 continue;
             }
         }
     }
-    
+
     //Inicializar vidas, y demás miembros
-    newGame->lives = INIT_LIVES;
-    newGame->ballQuantity = 1;
-    newGame->ballSpeed = newBallSpeed;
-    newGame->ballPosition[0] = 0;
-    newGame->ballPosition[1] = 0;
-    newGame->racketLenght = 10;
-    newGame->racketPosition = 0;
+    mainGame->lives = INIT_LIVES;
+    mainGame->ballQuantity = 1;
+    mainGame->ballSpeed = newBallSpeed;
+    mainGame->ballPosition[0] = 0;
+    mainGame->ballPosition[1] = 0;
+    mainGame->racketLenght = 1000;
+    mainGame->racketPosition = 0;
 
-    newGame->level = levelUp;
-    newGame->score = newScore;
+    mainGame->level = levelUp;
+    mainGame->score = newScore;
 
-    newGame->greenBrickValue = greenVal;
-    newGame->yellowBrickValue = yellowVal;
-    newGame->orangeBrickValue = orangeVal;
-    newGame->redBrickValue = redVal;
+    mainGame->greenBrickValue = greenVal;
+    mainGame->yellowBrickValue = yellowVal;
+    mainGame->orangeBrickValue = orangeVal;
+    mainGame->redBrickValue = redVal;
 
-    printf("Valores de ladrillos: G = %i, Y = %i, O = %i, R = %i \n", 
-        newGame->greenBrickValue, 
-        newGame->yellowBrickValue, 
-        newGame->orangeBrickValue, 
-        newGame->redBrickValue);
+    printf("Valores de ladrillos: G = %i, Y = %i, O = %i, R = %i \n",
+           mainGame->greenBrickValue,
+           mainGame->yellowBrickValue,
+           mainGame->orangeBrickValue,
+           mainGame->redBrickValue);
 }
 
 
-bool levelFinished(game_t* currentGame){
+bool levelFinished(){
     for (int i = 0; i < MAXROWS; i++){
         for (int j = 0; j < MAXCOLS; j++){
-            if (currentGame->matrix[i][j] != 0){
+            if (mainGame->matrix[i][j] != 0){
                 return false;
             }
         }
@@ -99,25 +98,24 @@ bool levelFinished(game_t* currentGame){
 }
 
 /**
- * nextLevel: revisa si el nivel ha terminado, 
- * si es así, vuelve a inicializar el juego con los nuevos valores correspondientes 
+ * nextLevel: revisa si el nivel ha terminado,
+ * si es así, vuelve a inicializar el juego con los nuevos valores correspondientes
  */
-void nextLevel(game_t* currrentGame){
-    if(levelFinished(currrentGame) == true){
+void nextLevel(){
+    if(levelFinished(mainGame) == true){
         //Reiniciar el juego con los mismos valores de ladrillos, pero con el doble de la velocidad de la bola
-        createGame(currrentGame,currrentGame->greenBrickValue, 
-                                currrentGame->yellowBrickValue, 
-                                currrentGame->orangeBrickValue,
-                                currrentGame->redBrickValue, 
-                                                            currrentGame->ballSpeed*2, 
-                                                            currrentGame->level++,
-                                                            currrentGame->score);
+        createGame(mainGame->greenBrickValue,
+                   mainGame->yellowBrickValue,
+                   mainGame->orangeBrickValue,
+                   mainGame->redBrickValue,
+                   mainGame->ballSpeed*2,
+                   mainGame->level++,
+                   mainGame->score);
     }else{
-        printf("No se ha terminado el nivel");
+        //printf("No se ha terminado el nivel");
     }
 }
 
-bool lost(game_t* currentGame){
-    return currentGame->lives == 0;
+bool lost(){
+    return mainGame->lives == 0;
 }
-

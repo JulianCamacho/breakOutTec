@@ -39,7 +39,7 @@ public class Main extends Application {
 	private static final Integer DEFAULTPOINTSBRICK = 100;
 	
 	//variables
-	private Integer[][] matrix;
+	private Integer[][] matrix = new Integer[8][14];
 	private Integer lives = 0;
 	private Integer ballQuantity = 0;
 	private Integer ballSpeed = 0;
@@ -53,14 +53,14 @@ public class Main extends Application {
 	private Integer redBrickValue = 0;
 	
 	//Matriz de referencia, para saber si cambia
-	private Integer[][] prevMatrix;
+	private Integer[][] prevMatrix = new Integer[8][14];
 	
 	//Debug de los json
 	Integer jsonDebug = 1;
 	
 	boolean gameOver = false;
 	
-	static Cliente cliente = new Cliente("Init");
+	static Cliente cliente = new Cliente("Broke 0 0");
 	
 	//Ventana principal
 	Stage window;
@@ -155,7 +155,7 @@ public class Main extends Application {
 				  		player.moveRight();
 				  		break;
 				  	case C:
-				  		cliente.setSentence("Helados");
+				  		//cliente.setSentence("Helados");
 				  		break;
 				  	case P:
 				  		this.jsonDebug *= -1;
@@ -184,8 +184,11 @@ public class Main extends Application {
 	
 	private void update() {
 		
+		//System.out.print(this.score);
+
 		//Si la matriz cambia, borra la matriz antigua, asigna la nueva matriz y vuelve a construirla
 		if(checkMatrixChange()) {
+			System.out.print("Matrix changed");
 			clearBricks();
 			createMatrix();
 		}
@@ -202,14 +205,14 @@ public class Main extends Application {
 		}
 		
 		//Si rompe todos los bloques, gana el nivel
-		
+		/*
 		if(this.bricks.size() <= 0 && !gameOver) {
 			clearBalls();
 			gameOver = true;
 			AlertBox.display("Felicidades", "Ganaste el nivel");
 			window.setScene(menuScene);
 			System.out.println("Ganó");
-		}
+		}*/
 		
 		//check if balls bounds on window
 		for(int j = 0; j < balls.size(); j++){
@@ -276,6 +279,7 @@ public class Main extends Application {
 				Integer points = 100;
 				Color color = Color.GRAY;
 				
+				System.out.print(matrix[y][x]);
 				if(matrix[y][x] == 0) {
 					continue;
 				}
@@ -338,9 +342,9 @@ public class Main extends Application {
 	
 	private Boolean checkMatrixChange() {
 		
-		JsonTestClass json = parser.deserializeJson(jsonDebug);
-		
-		if (Arrays.deepEquals(json.matrix, this.matrix))
+		JsonTestClass json = parser.deserializeJson(cliente.getJsonReceived());
+		//System.out.println(json.matrix[0][0]);
+		if (Arrays.deepEquals(json.matrix, this.matrix))// || json.matrix == null)
 			  return false;
 			else {
 				this.matrix = json.matrix;
@@ -452,7 +456,7 @@ public class Main extends Application {
 	
 	public void setupGame() {
 		
-		JsonTestClass json = parser.deserializeJson(jsonDebug);
+		JsonTestClass json = parser.deserializeJson(cliente.getJsonReceived());
 		
 		this.matrix = json.matrix;
 		this.lives = json.lives;
@@ -493,7 +497,7 @@ public class Main extends Application {
 	
 	public void setVairablesWithJson() {
 		
-		JsonTestClass json = parser.deserializeJson(jsonDebug);
+		JsonTestClass json = parser.deserializeJson(cliente.getJsonReceived());
 		
 		this.lives = json.lives;
 		

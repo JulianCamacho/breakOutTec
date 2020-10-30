@@ -6,7 +6,7 @@
 #define MAX_READ_JSON 255
 
 #define INIT_LIVES 3
-#define INIT_BALL_SPEED 10
+#define INIT_BALL_SPEED 3
 #define INIT_LVL 1
 #define INIT_SCORE 0
 
