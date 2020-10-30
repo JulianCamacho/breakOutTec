@@ -155,7 +155,7 @@ public class Main extends Application {
 				  		player.moveRight();
 				  		break;
 				  	case C:
-				  		//cliente.setSentence("Helados");
+				  		cliente.setSentence("Broke 5 5");
 				  		break;
 				  	case P:
 				  		this.jsonDebug *= -1;
@@ -271,6 +271,7 @@ public class Main extends Application {
 	 */
 	
 	public void createMatrix() {
+	
 		//Crea la matriz de bloques
 		for(int y = 0; y < 8; y++) {
 			for(int x = 0; x < 14; x++) {
@@ -279,7 +280,7 @@ public class Main extends Application {
 				Integer points = 100;
 				Color color = Color.GRAY;
 				
-				System.out.print(matrix[y][x]);
+				//System.out.print(matrix[y][x]);
 				if(matrix[y][x] == 0) {
 					continue;
 				}
@@ -333,6 +334,14 @@ public class Main extends Application {
 		}
 	}
 	
+	public void printMat(Integer[][] mat) {
+		for(int y = 0; y < 8; y++) {
+			for(int x = 0; x < 14; x++) {
+				System.out.print(mat[y][x]);
+			}
+		}
+	}
+	
 	/*
 	 * Función que revisa si la matriz cambia, respecto al json para poder cambiarla en la interfaz
 	 * Entradas: -
@@ -343,21 +352,24 @@ public class Main extends Application {
 	private Boolean checkMatrixChange() {
 		
 		JsonTestClass json = parser.deserializeJson(cliente.getJsonReceived());
-		//System.out.println(json.matrix[0][0]);
-		if (Arrays.deepEquals(json.matrix, this.matrix))// || json.matrix == null)
+		//System.out.println(this.matrix[0][0] +" -> "+ json.matrix[0][0]);
+		if (Arrays.deepEquals(json.matrix, this.matrix)){// || json.matrix == null)
 			  return false;
-			else {
-				this.matrix = json.matrix;
-				return true;
-			}
+		}
+		else {
+			this.matrix = json.matrix;
+			return true;
+		}
 	}
 	
+
 	/*
 	 * Función que se encarga de limpiar la lista de bolas, además de destruir los widgets tipo bola de la interfaz
 	 * Entradas: -
 	 * Salidas: -
 	 * Restricciones: -
 	 */
+	
 	
 	private void clearBalls() {
 		for(int i = 0; i < balls.size(); i++) {

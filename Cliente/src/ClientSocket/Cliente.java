@@ -10,12 +10,13 @@ public class Cliente extends Thread{
 	public Cliente(String sentence) {
 		super();
 		this.sentence = sentence;
+		this.jsonReceived = new String();
 	}
 
 	public void run(){
 
-        String modifiedSentence;
-
+        String modifiedSentence = new String();
+        
         BufferedReader inFromUser =
           new BufferedReader(new InputStreamReader(System.in));
 
@@ -32,16 +33,17 @@ public class Cliente extends Thread{
 	        
 	        try {
 	        	while(true) {
-	                	esperar(3);
+	                	esperar(1);
 	                	
-		                System.out.println("SENTENCE: "+sentence);
+		                //System.out.println("SENTENCE: "+sentence);
 		                
 		                outToServer.writeBytes('/' + sentence +'\n');
 		                
 		                modifiedSentence = inFromServer.readLine();
-		                jsonReceived = modifiedSentence;
 		                
-		                System.out.println("FROM SERVER: "+jsonReceived+"\n");
+	                	this.jsonReceived = "{"+modifiedSentence.substring(1, modifiedSentence.length()-1)+"}";
+		                //System.out.println("FROM SERVER: "+this.jsonReceived+"\n");          
+
 	            }
 	        	
 	        }catch (SocketException socketException){

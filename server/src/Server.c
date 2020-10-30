@@ -74,7 +74,7 @@ int run(){
         if (iResult > 0) {
             char* token=strtok(buff,"{ }");
             strcat(token,final);
-            printf("JSON: %s\n", token);
+            //printf("JSON: %s\n", token);
             iSendResult = send(sAcceptSocket, token, strlen(token)+1, 0);
             memset(buff,0,strlen(buff));
             memset(token,0,strlen(token));

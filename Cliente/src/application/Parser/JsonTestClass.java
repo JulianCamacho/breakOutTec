@@ -2,11 +2,11 @@ package application.Parser;
 
 public class JsonTestClass {
 	
-	public Integer[][] matrix;
+	public Integer[][] matrix = new Integer[8][14];
 	public Integer lives;
 	public Integer ballQuantity;
 	public Integer ballSpeed;
-	public Integer[] ballPosition;
+	public Integer[] ballPosition = new Integer[2];
 	public Integer racketLenght;
 	public Integer racketPosition;
 	public Integer level;
