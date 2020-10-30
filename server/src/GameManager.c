@@ -9,6 +9,7 @@
 #include "Constants.h"
 #include "../lib/json-maker.c"
 #include "../lib/tiny-json.c"
+#include "Server.c"
 //Undefined reference to -> include .c
 
 
@@ -58,12 +59,14 @@ int main(int argc,char* argv[]) {
         argv[1] = valor ladrillo verde
         ...
     */
+    char buff[DEFAULT_BUFLEN];
+
     if (argc = MINARGS){
         //Inicializar el juego
         createGame(g1, atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), INIT_BALL_SPEED, INIT_LVL, INIT_SCORE);
 
         //Pruebas para revisar la actualización del juego con los mensajes del Cliente 
-        receiveClientMessage("Broke 1 2", g1);
+       /* receiveClientMessage("Broke 1 2", g1);
         receiveClientMessage("LostLife", g1);
         receiveClientMessage("BallQuantity", g1);
         receiveClientMessage("BallSpeed Down", g1);
@@ -73,15 +76,16 @@ int main(int argc,char* argv[]) {
         receiveClientMessage("RacketPosition 50", g1);
         receiveClientMessage("Broke 3 11", g1);
         receiveClientMessage("LostLife", g1);
-        receiveClientMessage("LostLife", g1);
+        receiveClientMessage("LostLife", g1);*/
 
 
-        char buff[512];
         //Pasar la estructura actual del juego a JSON String
         jsonGame(buff, g1);
         printf("\nJSON del juego actual= %s\n", buff);
         //Escribir el JSON String en el archivo game.json
-        useJsonFile(buff);
+        //useJsonFile(buff);
+
+        run(buff, g1);
     } 
     else{ 
         printf("No se lograron asignar valores a los ladrillos \n"); 
@@ -116,7 +120,6 @@ int main(int argc,char* argv[]) {
     //WaitForSingleObject(hThread, INFINITE);
     CloseHandle(hThread);
     system("PAUSE");*/
-    
 
     return 0; 
 } 

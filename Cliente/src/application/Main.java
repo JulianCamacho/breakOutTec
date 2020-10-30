@@ -1,6 +1,8 @@
 package application;	
+import java.io.IOException;
 import java.util.ArrayList;
 
+import ClientSocket.Cliente;
 import application.Bricks.Brick;
 import application.Bricks.BrickFactory;
 import application.Bricks.BrickType;
@@ -46,6 +48,8 @@ public class Main extends Application {
 	private Integer redBrickValue = 0;
 	
 	boolean gameOver = false;
+	
+	static Cliente cliente = new Cliente("Init");
 	
 	//Ventana principal
 	Stage window;
@@ -131,6 +135,9 @@ public class Main extends Application {
 				  		break;
 				  	case D: 
 				  		player.moveRight();
+				  		break;
+				  	case C:
+				  		cliente.setSentence("Helados");
 				  		break;
 				  	
 				  }
@@ -341,14 +348,12 @@ public class Main extends Application {
 		this.matrix = json.matrix;
 		this.lives = json.lives;
 		
-		//this.ballQuantity = json.ballQuantity;
-		this.ballQuantity = 10;
+		this.ballQuantity = json.ballQuantity;
 		this.ballSpeed = json.ballSpeed;
-		this.ballSpeed = 9;
-		this.racketLenght = 100;
-		//this.racketPosition = json.racketPosition;
-		//this.racketPosition = 400;
-		this.racketPosition = 0;
+
+		this.racketLenght = json.racketLenght;
+		this.racketPosition = json.racketPosition;
+		
 		this.level = json.level;
 		this.score = json.score;
 		this.greenBrickValue = json.greenBrickValue;
@@ -357,13 +362,12 @@ public class Main extends Application {
 		this.redBrickValue = json.redBrickValue;
 		
 		player = new Player(racketPosition, PLAYERY, racketLenght, PLAYERHEIGHT, "player", Color.BLUE);
-		
-		System.out.println(ballQuantity);
 	}
 	
 	//Función inicializadora del juego
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage primaryStage) throws IOException {
+		//cliente.start();
 		
 		window = primaryStage;
 		  
@@ -375,7 +379,7 @@ public class Main extends Application {
 		
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		launch(args);
 	}
 }

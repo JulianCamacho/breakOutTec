@@ -16,3 +16,6 @@
 #define BRICK_SPEED_DOWN 8
 #define BRICK_RACKET_UP 9
 #define BRICK_RACKET_DOWN 10
+
+#define DEFAULT_BUFLEN 512
+#define PORT 8080

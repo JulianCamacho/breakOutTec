@@ -114,22 +114,22 @@ void updateScore(game_t* currentGame, int brickID){
 
 void receiveClientMessage(char* msg, game_t* currentGame){
     short cont = 0;
-    char tmp[256];
+    char tmp[DEFAULT_BUFLEN];
     strcpy(tmp, msg);       //Copiar msg en tmp
 
+    printf("Mensaje del cliente recibido: %s ", tmp);
     char* splitMsg = strtok(tmp, " ");      // splitMsg equivalente msg[0]
-    printf("Mensaje del cliente recibido: %s ", splitMsg);
 
-
+    /*
     //=======================    Actualizar si se rompió un bloque    =======================//
-                                                    
-    if (strcmp(splitMsg, "Broke") == 0){  
-        
+
+    if (strcmp(splitMsg, "Broke") == 0){
+
         splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[1]
         int row = atoi(splitMsg);
         printf("%i ", row);
 
-        splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[2]  
+        splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[2]
         int col = atoi(splitMsg);
         printf("%i \n", col);
 
@@ -142,14 +142,14 @@ void receiveClientMessage(char* msg, game_t* currentGame){
     //====================    Actualizar la cantidad de vidas    ====================//
 
     else if (strcmp(splitMsg, "LostLife") == 0){
-        currentGame->lives--;    
+        currentGame->lives--;
     }
 
 
     //====================    Actualizar la cantidad de bolas    =======================//
 
     else if (strcmp(splitMsg, "BallQuantity") == 0){
-        currentGame->ballQuantity+=1;    
+        currentGame->ballQuantity+=1;
     }
 
 
@@ -160,11 +160,11 @@ void receiveClientMessage(char* msg, game_t* currentGame){
         printf("%s \n", splitMsg);
         if (strcmp(splitMsg, "Up") == 0){
             currentGame->ballSpeed = (1.3 * currentGame->ballSpeed);
-        } 
+        }
         else if (strcmp(splitMsg, "Down") == 0){
             currentGame->ballSpeed = (0.7 * currentGame->ballSpeed);
         }
-    } 
+    }
 
 
     //====================    Actualizar la posición de la bola    =======================//
@@ -174,7 +174,7 @@ void receiveClientMessage(char* msg, game_t* currentGame){
         int xPos = atoi(splitMsg);
         printf("%i ", xPos);
 
-        splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[2]  
+        splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[2]
         int yPos = atoi(splitMsg);
         printf("%i \n", yPos);
 
@@ -190,11 +190,11 @@ void receiveClientMessage(char* msg, game_t* currentGame){
         printf("%s \n", splitMsg);
         if (strcmp(splitMsg, "Up") == 0){
             currentGame->racketLenght = (2 * currentGame->racketLenght);
-        } 
+        }
         else if (strcmp(splitMsg, "Down") == 0){
             currentGame->racketLenght = (0.5 * currentGame->racketLenght);
-        }    
-    } 
+        }
+    }
 
 
     //====================    Actualizar la posición de la raqueta    =======================//
@@ -203,12 +203,12 @@ void receiveClientMessage(char* msg, game_t* currentGame){
         splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[1]
         int pos = atoi(splitMsg);
         printf("%i \n", pos);
-        
+
         currentGame->racketPosition = pos;
     }
     else{
         printf("Mensaje inválido o no procesado");
-    } 
+    } */
 }
 
 
