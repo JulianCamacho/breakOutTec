@@ -54,30 +54,27 @@ int run(){
     printf("Cliente Conectado.....\n");
     int recvbuflen = DEFAULT_BUFLEN;
 
-    char buff[DEFAULT_BUFLEN];
 
 // Recibir hasta que la conexion sea cerrada
     do {
+        char buff[DEFAULT_BUFLEN];
         nextLevel();
         //Verifica si el jugador perdió
         if(lost()){
             printf("You lost");
         }
-
         memset(recvbuf,0,recvbuflen);
         iResult = recv(sAcceptSocket, recvbuf, recvbuflen, 0);
 
-        receiveClientMessage(recvbuf);
-
-        jsonGame(buff);
-
         if (iResult > 0) {
+            receiveClientMessage(recvbuf);
+            jsonGame(buff);
             char* token=strtok(buff,"{ }");
             strcat(token,final);
             //printf("JSON: %s\n", token);
             iSendResult = send(sAcceptSocket, token, strlen(token)+1, 0);
-            memset(buff,0,strlen(buff));
-            memset(token,0,strlen(token));
+            //memset(buff,0,strlen(buff));
+            //memset(token,0,strlen(token));
 
             if (iSendResult == SOCKET_ERROR) {
                 printf("Envio fallido: %d\n", WSAGetLastError());

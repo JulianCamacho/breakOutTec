@@ -4,14 +4,16 @@ import java.net.*;
 
 public class Cliente extends Thread{ 
 	String sentence;
-	String jsonReceived;
-	
+	static String jsonReceived;
+	String currentSentence;
 	
 	public Cliente(String sentence) {
 		super();
 		this.sentence = sentence;
 		this.jsonReceived = new String();
+		this.currentSentence = new String();
 	}
+
 
 	public void run(){
 
@@ -35,15 +37,19 @@ public class Cliente extends Thread{
 	        	while(true) {
 	                	esperar(1);
 	                	
-		                //System.out.println("SENTENCE: "+sentence);
+	                	if(sentence != currentSentence) {
+	                		System.out.println("SENTENCE: "+sentence);
+			                
+			                outToServer.writeBytes('/' + sentence +'\n');
+			                
+			                modifiedSentence = inFromServer.readLine();
+			                
+		                	this.setJsonReceived("{"+modifiedSentence.substring(1, modifiedSentence.length()-1)+"}");
+			                System.out.println("FROM SERVER: "+this.jsonReceived+"\n");          
+	                		
+			                currentSentence = sentence;
+	                	} 
 		                
-		                outToServer.writeBytes('/' + sentence +'\n');
-		                
-		                modifiedSentence = inFromServer.readLine();
-		                
-	                	this.jsonReceived = "{"+modifiedSentence.substring(1, modifiedSentence.length()-1)+"}";
-		                //System.out.println("FROM SERVER: "+this.jsonReceived+"\n");          
-
 	            }
 	        	
 	        }catch (SocketException socketException){
@@ -57,7 +63,7 @@ public class Cliente extends Thread{
 	
 	public static void esperar(int segundos){
         try {
-            Thread.sleep(segundos * 1000);
+            Thread.sleep(segundos * 20);
          } catch (Exception e) {
             System.out.println(e);
          }
@@ -71,7 +77,7 @@ public class Cliente extends Thread{
 		this.sentence = sentence;
 	}
 
-	public String getJsonReceived() {
+	public static String getJsonReceived() {
 		return jsonReceived;
 	}
 

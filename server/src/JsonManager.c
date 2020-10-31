@@ -10,8 +10,8 @@
  * char* dest: donde se guardará el string
  * game_t* src: struct game actual
  */
-char* jsonGame( char* dest){
-    char* p = dest;                                         // p always points to the null character
+void jsonGame( char* p){
+    //char* p = dest;                                         // p always points to the null character
     //Abrir el JSON
     p = json_objOpen( p, NULL );                            // --> {\0
 
@@ -50,7 +50,7 @@ char* jsonGame( char* dest){
     p = json_objClose( p );                                 // --> {"lives":3,"ballQuantity":1}\0
     p = json_end( p );                                      // --> {"lives":3,"ballQuantity":1}\0
 
-    return p ;
+    //return p ;
 }
 
 
@@ -156,11 +156,11 @@ void receiveClientMessage(char* msg){
 
         splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[1]
         int row = atoi(splitMsg);
-        printf("%i ", row);
+        //printf("%i ", row);
 
         splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[2]
         int col = atoi(splitMsg);
-        printf("%i \n", col);
+        //printf("%i \n", col);
 
         updateScore(mainGame->matrix[row][col]);
         updateGameStats(mainGame->matrix[row][col]);
@@ -170,7 +170,7 @@ void receiveClientMessage(char* msg){
 
         //====================    Actualizar la cantidad de vidas    ====================//
 
-    else if (strcmp(splitMsg, "LostLife") == 0){
+    else if (strcmp(splitMsg, "Lost") == 0){
         mainGame->lives--;
     }
 
@@ -231,12 +231,12 @@ void receiveClientMessage(char* msg){
     else if (strcmp(splitMsg, "RacketPosition") == 0){
         splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[1]
         int pos = atoi(splitMsg);
-        printf("%i \n", pos);
+        //printf("%i \n", pos);
 
         mainGame->racketPosition = pos;
     }
     else{
-        printf("Mensaje invalido o no procesado\n");
+        //printf("\n");
     }
 }
 
@@ -255,6 +255,9 @@ void receiveUserMessage(char* msg){
 
     //=======================    Actualizar el valor de los bloques    =======================//
 
+    if (strlen(splitMsg) == 0){
+        printf("Mensaje vacío");
+    }
     if (strcmp(splitMsg, "BrickValues") == 0){
 
         splitMsg=strtok(NULL," ");          // splitMsg equivalente msg[1]
@@ -292,6 +295,8 @@ void receiveUserMessage(char* msg){
         printf("%i \n", col);
 
         mainGame->matrix[row][col] = BRICK_LIFE;
+        printf("Entendido!\n");
+
     }
 
 
@@ -307,6 +312,9 @@ void receiveUserMessage(char* msg){
         printf("%i \n", col);
 
         mainGame->matrix[row][col] = BRICK_BALL;
+        printf("Entendido!\n");
+
+
     }
 
 
@@ -324,6 +332,9 @@ void receiveUserMessage(char* msg){
             int col = atoi(splitMsg);
             printf("%i \n", col);
             mainGame->matrix[row][col] = BRICK_SPEED_UP;
+
+            printf("Entendido!\n");
+
         }
         else if (strcmp(splitMsg, "Down") == 0){
             splitMsg = strtok(NULL," ");          // splitMsg equivalente msg[1]
@@ -335,6 +346,9 @@ void receiveUserMessage(char* msg){
             printf("%i \n", col);
 
             mainGame->matrix[row][col] = BRICK_SPEED_DOWN;
+
+            printf("Entendido!\n");
+
         }
     }
 
@@ -354,6 +368,8 @@ void receiveUserMessage(char* msg){
             int col = atoi(splitMsg);
             printf("%i \n", col);
             mainGame->matrix[row][col] = BRICK_RACKET_UP;
+            printf("Entendido!\n");
+
         }
         else if (strcmp(splitMsg, "Down") == 0){
             splitMsg = strtok(NULL," ");          // splitMsg equivalente msg[2]
@@ -365,9 +381,11 @@ void receiveUserMessage(char* msg){
             printf("%i \n", col);
 
             mainGame->matrix[row][col] = BRICK_RACKET_DOWN;
+            printf("Entendido!\n");
+
         }
     }
     else{
-        printf("Mensaje inválido o no procesado\n");
+        //printf("\n");
     }
 }

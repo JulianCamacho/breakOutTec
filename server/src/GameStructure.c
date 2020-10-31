@@ -67,7 +67,7 @@ void createGame(int greenVal,int yellowVal, int orangeVal, int redVal, double ne
     mainGame->ballSpeed = newBallSpeed;
     mainGame->ballPosition[0] = 0;
     mainGame->ballPosition[1] = 0;
-    mainGame->racketLenght = 1000;
+    mainGame->racketLenght = INIT_RACKET_LEN;
     mainGame->racketPosition = 0;
 
     mainGame->level = levelUp;

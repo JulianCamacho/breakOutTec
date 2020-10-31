@@ -11,6 +11,7 @@ import application.Parser.JsonParser;
 import application.Parser.JsonTestClass;
 import application.PlayerAndBall.Ball;
 import application.PlayerAndBall.Player;
+import application.SpectClient.Spect;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -60,8 +61,9 @@ public class Main extends Application {
 	
 	boolean gameOver = false;
 	
-	static Cliente cliente = new Cliente("Broke 0 0");
-	
+	static Cliente cliente = new Cliente("Init");
+	static Spect spect = new Spect();
+
 	//Ventana principal
 	Stage window;
 	Scene menuScene;
@@ -145,7 +147,7 @@ public class Main extends Application {
 			setupGame();
 			
 			Scene gameScene = new Scene(createContentGame());
-			  
+
 			gameScene.setOnKeyPressed(f ->{
 				switch(f.getCode()) {
 				 	case A:
@@ -155,7 +157,7 @@ public class Main extends Application {
 				  		player.moveRight();
 				  		break;
 				  	case C:
-				  		cliente.setSentence("Broke 5 5");
+				  		cliente.setSentence("Lost Life");
 				  		break;
 				  	case P:
 				  		this.jsonDebug *= -1;
@@ -166,11 +168,20 @@ public class Main extends Application {
 			window.setScene(gameScene);
 		});
 		
+		Button loadButton = new Button("Load Game");
+		loadButton.setOnAction(e ->{				  		
+			cliente.setSentence("Init2");
+		});
+		
 		Button spectButton = new Button("Spect");
+		spectButton.setOnAction(e ->{				  		
+			spect.display("Prueba", "Ventana de prueba");
+			spect.start();
+		});
 		
 		menu.setPrefSize(WIDTH, HEIGHT);
 		
-		menu.getChildren().addAll(gameButton, spectButton);
+		menu.getChildren().addAll(gameButton, loadButton, spectButton);
 		
 		return menu;
 		
@@ -185,7 +196,6 @@ public class Main extends Application {
 	private void update() {
 		
 		//System.out.print(this.score);
-
 		//Si la matriz cambia, borra la matriz antigua, asigna la nueva matriz y vuelve a construirla
 		if(checkMatrixChange()) {
 			System.out.print("Matrix changed");
@@ -221,12 +231,14 @@ public class Main extends Application {
 			ball.moveX(WIDTH);
 			ball.moveY(WIDTH);
 			
+			
 			//Si alguna bola pasa por debajo de la posición Y de la raqueta
 			
 			if(ball.getCenterY() > PLAYERY) {
 				root.getChildren().remove(balls.get(j));
 				balls.remove(j);
 				this.lives--;
+		  		cliente.setSentence("Lost Life");
 				if(this.lives >= 0) {
 					spawnBall(1);
 				}
@@ -241,10 +253,14 @@ public class Main extends Application {
 			for(int i = 0; i < bricks.size(); i++) {
 				
 				if(ball.getBoundsInParent().intersects(bricks.get(i).getBoundsInParent())) {
-					String action = bricks.get(i).performAction();
-					Integer points = bricks.get(i).getPoints();
-					brickAction(action, points);
+					//String action = bricks.get(i).performAction();
+					//Integer points = bricks.get(i).getPoints();
+					//brickAction(action, points);
 					root.getChildren().remove(bricks.get(i));
+					System.out.println(bricks.get(i).row + ", " + bricks.get(i).col);
+					String action = "Broke "+Integer.toString(bricks.get(i).row) + " " +Integer.toString(bricks.get(i).col);
+					cliente.setSentence(action);
+					//cliente.setSentence("Broke 6 6");
 					bricks.remove(i);
 					ball.changeDirY();
 				}
@@ -258,6 +274,9 @@ public class Main extends Application {
 		scoreLabel.setText("Score: " + Integer.toString(this.score));
 		livesLabel.setText("Lives: " + Integer.toString(this.lives));
 		levelLabel.setText("Level: " + Integer.toString(this.level));
+		
+		
+				
 		
 		//clearBricks();
 		
@@ -281,46 +300,46 @@ public class Main extends Application {
 				Color color = Color.GRAY;
 				
 				//System.out.print(matrix[y][x]);
-				if(matrix[y][x] == 0) {
+				if(this.matrix[y][x] == 0) {
 					continue;
 				}
 				
-				if(matrix[y][x] < 5 && matrix[y][x] != 0) {
+				if(this.matrix[y][x] < 5 && this.matrix[y][x] != 0) {
 					type = BrickType.NORMAL;
 					color = Color.GRAY;
 					points = DEFAULTPOINTSBRICK;
 				}
 				
-				if(matrix[y][x] == 5) {
+				if(this.matrix[y][x] == 5) {
 					type = BrickType.LIFE;
 					color = Color.GREEN;
 					points = this.greenBrickValue;
 				}
 				
-				if(matrix[y][x] == 6) {
+				if(this.matrix[y][x] == 6) {
 					type = BrickType.BALL;
 					color = Color.YELLOW;
 					points = this.yellowBrickValue;
 				}
 				
-				if(matrix[y][x] == 7) {
+				if(this.matrix[y][x] == 7) {
 					type = BrickType.INCVEL;
 					color = Color.ORANGE;
 					points = this.orangeBrickValue;
 				}
 				
-				if(matrix[y][x] == 8) {
+				if(this.matrix[y][x] == 8) {
 					type = BrickType.DECVEL;
 					color = Color.PURPLE;
 					points = this.orangeBrickValue;
 				}
 				
-				if(matrix[y][x] == 9) {
+				if(this.matrix[y][x] == 9) {
 					type = BrickType.DOUBLESIZE;
 					color = Color.RED;
 					points = this.redBrickValue;
 				}
-				if(matrix[y][x] == 10) {
+				if(this.matrix[y][x] == 10) {
 					type = BrickType.MIDSIZE;
 					color = Color.BLACK;
 					points = this.redBrickValue;
@@ -328,6 +347,8 @@ public class Main extends Application {
 				
 				//Integer iInteger = new Integer(iInt);
 				Brick brick = factory.getBrick(type, WIDTH/14 * x, y * 20 + y + 100 , WIDTH/14 - 1, 20, points, color);
+				brick.row = y;
+				brick.col = x;
 				bricks.add(brick);
 				root.getChildren().add(brick);
 			}
@@ -352,8 +373,8 @@ public class Main extends Application {
 	private Boolean checkMatrixChange() {
 		
 		JsonTestClass json = parser.deserializeJson(cliente.getJsonReceived());
-		//System.out.println(this.matrix[0][0] +" -> "+ json.matrix[0][0]);
-		if (Arrays.deepEquals(json.matrix, this.matrix)){// || json.matrix == null)
+
+		if (Arrays.deepEquals(json.matrix, this.matrix)){
 			  return false;
 		}
 		else {
@@ -528,6 +549,14 @@ public class Main extends Application {
 		
 	}
 	
+	public static void esperar(int segundos){
+        try {
+            Thread.sleep(segundos * 500);
+         } catch (Exception e) {
+            System.out.println(e);
+         }
+    }
+	
 	/*
 	 * Función inicializadora del juego, crea el menú delm juego
 	 * Entradas: -
@@ -538,7 +567,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 		cliente.start();
-		
+
 		window = primaryStage;
 		  
 		menuScene = new Scene(createContentMenu()); 
