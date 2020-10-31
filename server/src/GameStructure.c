@@ -6,7 +6,10 @@
 
 #include "Constants.h"
 
-
+/**
+ * game: estructura principal del juego
+ * Almacena todas las variables del juego
+ */
 typedef struct game{
     int matrix[MAXROWS][MAXCOLS];
     int lives;
@@ -37,12 +40,12 @@ static game_t* mainGame;
  */
 
 void createGame(int greenVal,int yellowVal, int orangeVal, int redVal, double newBallSpeed, int levelUp, int newScore){
-    //Inicializar todos los datos del juego actual
 
     //Inicializar la matriz de juego
     for (int i = 0; i < MAXROWS; i++){
         for (int j = 0; j < MAXCOLS; j++){
             if (i == 0 || i == 1){
+                //mainGame->matrix[i][j] = rand() % 10;
                 mainGame->matrix[i][j] = 4;
                 continue;
             }
@@ -85,7 +88,10 @@ void createGame(int greenVal,int yellowVal, int orangeVal, int redVal, double ne
            mainGame->redBrickValue);
 }
 
-
+/**
+ * levelFinished: revisa la matriz para verificar si está vacía
+ * @return
+ */
 bool levelFinished(){
     for (int i = 0; i < MAXROWS; i++){
         for (int j = 0; j < MAXCOLS; j++){
@@ -116,6 +122,10 @@ void nextLevel(){
     }
 }
 
+/**
+ * lost: verifica si las vidas se han terminado
+ * @return
+ */
 bool lost(){
     return mainGame->lives == 0;
 }

@@ -14,6 +14,7 @@ import application.PlayerAndBall.Player;
 import application.SpectClient.Spect;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -140,6 +141,7 @@ public class Main extends Application {
 		
 		VBox menu = new VBox(20);
 		
+		menu.setAlignment(Pos.CENTER);
 		Button gameButton = new Button("Play");
 		gameButton.setOnAction(e ->{
 			
@@ -253,13 +255,13 @@ public class Main extends Application {
 			for(int i = 0; i < bricks.size(); i++) {
 				
 				if(ball.getBoundsInParent().intersects(bricks.get(i).getBoundsInParent())) {
-					//String action = bricks.get(i).performAction();
-					//Integer points = bricks.get(i).getPoints();
-					//brickAction(action, points);
+					String action = bricks.get(i).performAction();
+					Integer points = bricks.get(i).getPoints();
+					brickAction(action, points);
 					root.getChildren().remove(bricks.get(i));
 					System.out.println(bricks.get(i).row + ", " + bricks.get(i).col);
-					String action = "Broke "+Integer.toString(bricks.get(i).row) + " " +Integer.toString(bricks.get(i).col);
-					cliente.setSentence(action);
+					String action2 = "Broke "+Integer.toString(bricks.get(i).row) + " " +Integer.toString(bricks.get(i).col);
+					cliente.setSentence(action2);
 					//cliente.setSentence("Broke 6 6");
 					bricks.remove(i);
 					ball.changeDirY();
@@ -442,15 +444,17 @@ public class Main extends Application {
 		switch(action) {
 			case "NormalBrick":
 				break;
-			case "LiveBrick":
-				this.lives++;
-				System.out.println(this.lives);
-				break;
+			//case "LiveBrick":
+				//this.lives++;
+				//System.out.println(this.lives);
+				//break;
 			case "Ballbrick":
-				spawnBall(1);
-				System.out.println("crea bola");
+				if (balls.size() < 3) {
+					spawnBall(1);
+					System.out.println("crea bola");
+				}
 				break;
-			case "DecreaseVelBrick":
+			/*case "DecreaseVelBrick":
 				balls.forEach(b ->{
 					if(b.getSpeed() > 1) {
 						b.IncreaseSpeed(-1);
@@ -466,7 +470,7 @@ public class Main extends Application {
 					}
 				});
 				ballSpeed++;
-				break;
+				break;*/
 			case "RacketDoubleSizeBrick":
 				racketLenght *= 2;
 				player.setWidth(racketLenght);
@@ -521,6 +525,9 @@ public class Main extends Application {
 		
 	}
 	
+	
+	
+	
 	/*
 	 *Función que se encarga de asignar las variables dependiendo del json
 	 *Entradas: -
@@ -536,6 +543,10 @@ public class Main extends Application {
 		
 		this.ballQuantity = json.ballQuantity;
 		this.ballSpeed = json.ballSpeed;
+		
+		balls.forEach(b->{
+			b.setSpeed(this.ballSpeed);
+		});
 
 		this.racketLenght = json.racketLenght;
 		this.racketPosition = json.racketPosition;

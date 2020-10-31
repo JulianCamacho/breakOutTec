@@ -7,6 +7,11 @@ SOCKET sAcceptSocket;
 char recvbuf[DEFAULT_BUFLEN];
 char final[3]="\n";
 
+/**
+ * run
+ * Socket Server
+ * @return
+ */
 int run(){
     printf("\t\t------SERVER------\t\n");
     //VARIABLES LOCALES

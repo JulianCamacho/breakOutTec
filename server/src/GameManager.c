@@ -11,7 +11,10 @@
 #include "../lib/tiny-json.c"
 #include "Server.c"
 
-
+/**
+ * myThread: función que se ejecuta en un thread aparte
+ * Se encarga de escuchar al usuario desde consola
+ */
 DWORD WINAPI myThread(LPVOID lpParam){
     printf("Thread running! Escuchando sus sugerencias.. \n");
     char input[100];
@@ -19,6 +22,8 @@ DWORD WINAPI myThread(LPVOID lpParam){
     while(1){
         gets(input);
         printf("Ha ingresado: %s\n", input);
+
+        //Analizar el input del usuario
         receiveUserMessage(input);
         Sleep(2 * 1000);
     }
@@ -26,7 +31,12 @@ DWORD WINAPI myThread(LPVOID lpParam){
 }
 
 
-
+/**
+ * main Función principal para ejecutar el server
+ * @param argc cantidad de argumentos
+ * @param argv argumentos
+ * @return
+ */
 int main(int argc,char* argv[]) {
 
 //======================  MANEJO DE ARGUMENTOS  =======================//
@@ -74,13 +84,8 @@ int main(int argc,char* argv[]) {
         printf("No se lograron asignar valores a los ladrillos \n");
     }
 
-
-
     //=======================================================================//
-
     //CloseHandle(hThread);
-
-
     //system("PAUSE");
 
     return 0;

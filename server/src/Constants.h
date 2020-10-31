@@ -6,10 +6,10 @@
 #define MAX_READ_JSON 255
 
 #define INIT_LIVES 3
-#define INIT_BALL_SPEED 3
+#define INIT_BALL_SPEED 2
 #define INIT_LVL 1
 #define INIT_SCORE 0
-#define INIT_RACKET_LEN 1000
+#define INIT_RACKET_LEN 300
 
 
 #define BRICK_LIFE 5

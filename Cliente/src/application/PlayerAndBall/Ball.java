@@ -54,4 +54,7 @@ public class Ball extends Circle{
 		return this.speed;
 	}
 	
+	public void setSpeed(Integer speed) {
+		this.speed = speed;
+	}
 }

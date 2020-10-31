@@ -57,7 +57,8 @@ void jsonGame( char* p){
 
 //============================== READER ==================================//
 
-/* jsonParse(): leer un archivo json
+/**
+ * jsonParse(): leer un archivo json
  *
  */
 int jsonParse(){
@@ -77,7 +78,7 @@ int jsonParse(){
 
 
 
-/*
+/**
  * useJsonFile: ingresar el string json en un archivo .json
  * char* newJson: string en formato json
  */
@@ -122,19 +123,33 @@ void updateGameStats(int brickID){
             mainGame->lives+=1;
             break;
         case BRICK_BALL:
-            mainGame->ballQuantity+=1;
+            //Si ya hay 3 bolas no aumente
+            if(mainGame->ballQuantity < 3){
+                mainGame->ballQuantity+=1;
+            }
             break;
         case BRICK_SPEED_UP:
-            mainGame->ballSpeed = 1.3 * mainGame->ballSpeed;
+            //Si la velocidad es mayor que 10 no la aumente
+            if(mainGame->ballSpeed < 10){
+                mainGame->ballSpeed = 2 * mainGame->ballSpeed;
+            }
             break;
+
         case BRICK_SPEED_DOWN:
-            mainGame->ballSpeed = 0.7 * mainGame->ballSpeed;
+            //Si la velocidad es menor que 1 no la disminuya
+            if(mainGame->ballSpeed >= 1){
+                mainGame->ballSpeed = mainGame->ballSpeed/2;
+            }
             break;
         case BRICK_RACKET_UP:
-            mainGame->racketLenght = 2 * mainGame->racketLenght;
+            if(mainGame->racketLenght < 500){
+                mainGame->racketLenght = 2 * mainGame->racketLenght;
+            }
             break;
         case BRICK_RACKET_DOWN:
-            mainGame->racketLenght = 0.5 * mainGame->racketLenght;
+            if(mainGame->racketLenght >= 50){
+                mainGame->racketLenght = mainGame->racketLenght/2;
+            }
             break;
         default:
             break;
@@ -142,6 +157,11 @@ void updateGameStats(int brickID){
 }
 
 
+/**
+ * receiveClientMessage
+ * Recibe, analiza y actualiza el juego según msg
+ * @param msg
+ */
 void receiveClientMessage(char* msg){
     short cont = 0;
     char tmp[DEFAULT_BUFLEN];
@@ -162,8 +182,13 @@ void receiveClientMessage(char* msg){
         int col = atoi(splitMsg);
         //printf("%i \n", col);
 
+        //Actualizar el puntaje del juego
         updateScore(mainGame->matrix[row][col]);
+
+        //Actualizar las variables del juego
         updateGameStats(mainGame->matrix[row][col]);
+
+        //Poner en cero el bloque --> roto
         mainGame->matrix[row][col] = 0;
     }
 
@@ -244,7 +269,11 @@ void receiveClientMessage(char* msg){
 
 //================================================================//
 
-
+/**
+ * receiveUserMessage
+ * Recibe, analiza y actualiza el juego según msg
+ * @param msg
+ */
 void receiveUserMessage(char* msg){
     short cont = 0;
     char tmp[256];
